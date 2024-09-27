@@ -18,12 +18,17 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env.local if it exists, else load .env
-dotenv_path = BASE_DIR / '.env.local'
-if dotenv_path.exists():
-    load_dotenv(dotenv_path)
+# Load environment variables
+if os.environ.get('DEBUG', '1') == '1':
+    # Load .env.local for development
+    dotenv_path = BASE_DIR / '.env.local'
+    if dotenv_path.exists():
+        load_dotenv(dotenv_path)
 else:
-    load_dotenv(BASE_DIR / '.env')
+    # Load .env from Production for production
+    dotenv_path = BASE_DIR / 'Production' / '.env'
+    if dotenv_path.exists():
+        load_dotenv(dotenv_path)
 
 # Function to get environment variables or raise exception
 def get_env_variable(var_name):

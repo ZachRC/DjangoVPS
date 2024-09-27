@@ -19,7 +19,7 @@ env/**
 .env.local
 .env
 venv/
-Production/.env
+/Production/.env
 
 # Static files
 staticfiles/
