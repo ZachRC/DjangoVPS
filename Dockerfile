@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Set work directory
-WORKDIR /Django
+WORKDIR /DjangoVPS
 
 # Install system dependencies
 RUN apt-get update && \
@@ -16,12 +16,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-COPY requirements.txt /Django/
+COPY requirements.txt /DjangoVPS/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /Django/
+COPY . /DjangoVPS/
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
