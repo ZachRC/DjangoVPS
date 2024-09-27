@@ -40,7 +40,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', '1') == '1'
 
 # Allowed Hosts
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
 
@@ -150,17 +150,16 @@ LOGOUT_REDIRECT_URL = 'index'
 # Security settings for production
 USE_SSL = os.environ.get('USE_SSL', '0') == '1'
 
-if not DEBUG and USE_SSL:
+if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-
-    # Additional security settings can be added here
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Logging configuration
 LOGGING = {
