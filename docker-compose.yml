@@ -1,17 +1,14 @@
 # docker-compose.yml
-
-version: '3.8'
-
 services:
   web:
     build: .
     command: gunicorn myproject.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/DjangoVPS
-    expose:
-      - 8000
     env_file:
       - .env
+    expose:
+      - "8000"
     restart: always
 
   nginx:
