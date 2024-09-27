@@ -4,7 +4,15 @@
 
 ## Overview
 
-**DjangoVPS** is a comprehensive boilerplate/template designed to streamline the process of local development and VPS deployment for Django applications. Leveraging Docker, Nginx, and Certbot, this setup provides an efficient and secure environment for your Django projects. Whether you're developing locally or deploying to a production server, DjangoVPS offers a robust foundation to build upon.
+**DjangoVPS** is a comprehensive boilerplate/template designed to streamline the process of local development and VPS deployment for Django applications. Leveraging Docker, Nginx, and Certbot, this setup provides an efficient and secure environment for your Django projects.
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Project Structure](#project-structure)
+3. [Prerequisites](#prerequisites)
+4. [Usage](#usage)
+5. [User Guides](#user-guides) <!-- Add this section -->
 
 ## Features
 
@@ -90,7 +98,7 @@
 - Access to your domain registrar (e.g., GoDaddy) to manage DNS records.
 - Valid email address for Let's Encrypt SSL certificates.
 
-## Setup Instructions
+## Usage
 
 ### 1. Clone the Repository
 
@@ -410,5 +418,9 @@ This project is open-source and available under the [MIT License](LICENSE).
 - **Nginx**: For efficient web serving.
 - **Let's Encrypt**: For free SSL certificates.
 - **Tailwind CSS**: For frontend styling.
+
+## User Guides
+
+- [Simplified User Guide](Simplified_User_Guide.md) <!-- Link to the guide -->
 
 ---
