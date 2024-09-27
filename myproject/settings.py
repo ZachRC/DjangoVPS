@@ -175,3 +175,12 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# Custom User Model
+AUTH_USER_MODEL = 'main.CustomUser'
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'main.backends.UsernameEmailBackend',  # Custom backend
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+]
