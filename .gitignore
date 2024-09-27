@@ -1,5 +1,13 @@
 # .gitignore
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
 # Python
 *.pyc
 __pycache__/
@@ -10,6 +18,14 @@ env/**
 *.env
 .env.local
 .env
+venv/
+
+# Static files
+staticfiles/
+static/
+
+# Media files
+media/
 
 # Django
 *.log
