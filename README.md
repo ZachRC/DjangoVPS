@@ -4,7 +4,7 @@
 
 ## Overview
 
-**DjangoVPS** is a boilerplate/template designed to streamline the process of local development and VPS deployment for Django applications. This setup leverages Docker, Nginx, and Certbot to provide an efficient and secure environment for your Django projects. Whether you're developing locally or deploying to a production server, DjangoVPS offers a robust foundation to build upon.
+**DjangoVPS** is a comprehensive boilerplate/template designed to streamline the process of local development and VPS deployment for Django applications. Leveraging Docker, Nginx, and Certbot, this setup provides an efficient and secure environment for your Django projects. Whether you're developing locally or deploying to a production server, DjangoVPS offers a robust foundation to build upon.
 
 ## Features
 
@@ -13,10 +13,15 @@
 - **Automated SSL with Let's Encrypt**: Secure your application with free SSL certificates using Certbot.
 - **Environment Management**: Easily manage different configurations for development and production using `.env.local` and `.env` files.
 - **Gunicorn Application Server**: Serve your Django application with Gunicorn for better performance.
-- **Custom User Authentication**: 
+- **Custom User Authentication**:
   - Register with both **username** and **email**.
   - Login using either **username** or **email**.
   - Ensures security and flexibility across both local and production environments.
+- **Superuser Panel**:
+  - Custom admin login page for superusers.
+  - Dedicated panel displaying all registered users and their information.
+  - Accessible only to superusers.
+- **Responsive Frontend**: Utilizes Tailwind CSS for a clean and responsive design.
 
 ## Project Structure
 
@@ -30,11 +35,6 @@
 ├── README.md
 ├── db.sqlite3
 ├── docker-compose.yml
-├── env
-│   ├── bin
-│   ├── include
-│   ├── lib
-│   └── pyvenv.cfg
 ├── init-letsencrypt.sh
 ├── main
 │   ├── __init__.py
@@ -65,7 +65,21 @@
 │   └── wsgi.py
 ├── nginx.conf
 ├── requirements.txt
-└── static
+├── static
+└── superuserapp
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── migrations
+    │   └── __init__.py
+    ├── models.py
+    ├── templates
+    │   └── superuserapp
+    │       ├── login.html
+    │       └── panel.html
+    ├── tests.py
+    ├── urls.py
+    └── views.py
 ```
 
 ## Prerequisites
@@ -112,17 +126,17 @@ This file contains production settings and should **never** be committed to vers
 ```dotenv
 # Common Settings
 SECRET_KEY=your-production-secret-key
-DJANGO_ALLOWED_HOSTS=yoururl.com,www.yoururl.com,your-VPS-ip
+DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com,your-VPS-ip
 
 # Debug Mode
 DEBUG=0
 
 # Database Configuration for Production (Supabase PostgreSQL)
 DATABASE_NAME=postgres
-DATABASE_USER=your-supabase-username
-DATABASE_PASSWORD=your-supabase-password
-DATABASE_HOST=your-supabase-host
-DATABASE_PORT=your-supabase-port
+DATABASE_USER=your-db-username
+DATABASE_PASSWORD=your-db-password
+DATABASE_HOST=your-db-host
+DATABASE_PORT=your-db-port
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS=main.backends.UsernameEmailBackend,django.contrib.auth.backends.ModelBackend
@@ -137,13 +151,13 @@ On your domain registrar (e.g., GoDaddy), set up the following DNS records:
 1. **A Record for Root Domain**
    - **Type**: A
    - **Name**: @
-   - **Value**: `167.172.224.226`
+   - **Value**: `your-VPS-ip-address`
    - **TTL**: 1/2 Hour
 
 2. **A Record for www Subdomain**
    - **Type**: A
    - **Name**: www
-   - **Value**: `167.172.224.226`
+   - **Value**: `your-VPS-ip-address`
    - **TTL**: 1/2 Hour
 
 ### 4. Build and Run Docker Containers
@@ -155,6 +169,7 @@ docker compose up --build -d
 ```
 
 This command will:
+
 - Build the Docker images based on the `Dockerfile`.
 - Start the Django application using Gunicorn.
 - Start Nginx as a reverse proxy.
@@ -170,7 +185,8 @@ chmod +x init-letsencrypt.sh
 ```
 
 **Script Breakdown:**
-- **Domains & Email**: The script is configured to request certificates for `scriptflows.com` and `www.scriptflows.com` using the provided email (`zacharycherney@gmail.com`). Modify these values in the script as needed.
+
+- **Domains & Email**: The script is configured to request certificates for `yourdomain.com` and `www.yourdomain.com` using the provided email (e.g., `youremail@example.com`). Modify these values in the script as needed.
 - **Staging Mode**: By default, `staging=0` is set to obtain real certificates. Use `staging=1` for testing to avoid hitting Let's Encrypt rate limits.
 - **SSL Parameters**: The script downloads recommended TLS parameters if not already present.
 - **Dummy Certificate**: A temporary certificate is created to allow Nginx to start.
@@ -192,40 +208,50 @@ docker compose run web python manage.py migrate
 
 ### 7. Create a Superuser (Optional)
 
-To access the Django admin interface, create a superuser.
+To access the Django admin interface and the Superuser Panel, create a superuser.
 
 ```bash
 docker compose run web python manage.py createsuperuser
 ```
 
-### 8. Access Your Application
+**Ensure:**
 
-After successful setup:
-- **Local Development**: Access via `http://localhost:8000`
-- **Production**: Access via `https://scriptflows.com` and `https://www.scriptflows.com` (Your Domain)
+- The superuser has `is_superuser=True` and `is_staff=True`.
+- Use the superuser credentials to log in via `superuserapp/login/`.
 
-### 9. Managing Static and Media Files
+### 8. Collect Static Files
 
-- **Static Files**: Served from `/static/`.
-- **Media Files**: Served from `/media/`.
-
-Ensure that you collect static files during the Docker build process:
+Ensure that static files are properly collected, especially since Tailwind CSS is being used from a CDN.
 
 ```bash
 docker compose run web python manage.py collectstatic --noinput
 ```
 
-### 10. Environment Management
+### 9. Access Your Application
+
+After successful setup:
+
+- **Local Development**: Access via `http://localhost:8000`
+- **Production**: Access via `https://yourdomain.com` and `https://www.yourdomain.com`
+
+### 10. Managing Static and Media Files
+
+- **Static Files**: Served from `/static/`.
+- **Media Files**: Served from `/media/`.
+
+Ensure that you collect static files during the Docker build process as shown above.
+
+### 11. Environment Management
 
 - **Local Development**: Use `.env.local` to override settings for local development.
 - **Production**: Use `.env` to set production configurations.
 
-### 11. Custom User Authentication
+### 12. Custom User Authentication
 
 DjangoVPS now supports robust user authentication with the following capabilities:
 
 - **Registration**:
-  - Users can register using both a **username** and an **email**.
+  - Users can register using both a **username** and **email**.
   - Email addresses are unique and required for registration.
   
 - **Login**:
@@ -234,7 +260,7 @@ DjangoVPS now supports robust user authentication with the following capabilitie
 - **Backend Configuration**:
   - Custom authentication backend (`UsernameEmailBackend`) ensures flexibility in user login methods.
   
-**Testing Authentication**:
+**Testing Authentication:**
 
 1. **Register a New User**:
    - Navigate to `/register/`.
@@ -251,14 +277,38 @@ DjangoVPS now supports robust user authentication with the following capabilitie
    - Navigate to `/login/`.
    - Enter your email and password to log in.
 
-### 12. Security Considerations
+### 13. Superuser Panel
+
+Superusers can access a dedicated panel to view all registered users.
+
+**Accessing the Panel:**
+
+1. **Login as Superuser**:
+   - Navigate to `/superuser/login/`.
+   - Enter your superuser credentials.
+
+2. **View Users**:
+   - Upon successful login, you'll be redirected to `/superuser/panel/`.
+   - Here, you'll see a table listing all registered users along with their information.
+
+**Dashboard Enhancements:**
+
+- If a superuser is authenticated and is on `dashboard.html`, a button is available to redirect them to the `superuserapp` panel.
+
+```html
+{% if user.is_superuser %}
+<a href="{% url 'superuserapp:panel' %}" class="block w-full bg-green-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-green-700 transition duration-300">Superuser Panel</a>
+{% endif %}
+```
+
+### 14. Security Considerations
 
 - **Secret Keys**: Always keep your `SECRET_KEY` secure and do not expose it publicly.
 - **Debug Mode**: Ensure `DEBUG=0` in production to avoid exposing sensitive information.
 - **Allowed Hosts**: Configure `DJANGO_ALLOWED_HOSTS` in `.env` to include your domain names and IP address.
 - **SSL Certificates**: Use automated SSL renewals to maintain secure HTTPS connections.
 
-### 13. Renewing SSL Certificates
+### 15. Renewing SSL Certificates
 
 Certbot is set up to automatically renew SSL certificates. The `certbot` service in `docker-compose.yml` runs the renewal process every 12 hours. To manually trigger a renewal:
 
@@ -266,13 +316,11 @@ Certbot is set up to automatically renew SSL certificates. The `certbot` service
 docker compose run --rm certbot renew
 ```
 
-### 14. Managing Migration Files
+### 16. Managing Migration Files
 
 **Should Migration Files Be Added to `.gitignore`?**
 
-**Recommendation:** **Do _not_ add migration files to `.gitignore`.**
-
-Migration files are essential for maintaining the consistency of your database schema across different environments (development, testing, production). Tracking them in version control ensures that all changes to the models are accurately reflected in the database structure wherever your project is deployed.
+**Recommendation:** **Do _not_ add migration files to `.gitignore`**. Migration files are essential for maintaining the consistency of your database schema across different environments (development, testing, production). Tracking them in version control ensures that all changes to the models are accurately reflected in the database structure wherever your project is deployed.
 
 **Benefits of Tracking Migrations:**
 
@@ -283,8 +331,8 @@ Migration files are essential for maintaining the consistency of your database s
 **Action Steps:**
 
 1. **Ensure Migrations Are Not Ignored:**
-   - **Review Your `.gitignore`:** Verify that your `.gitignore` doesn't exclude migration files. Migration files are typically located in each app's `migrations` directory (e.g., `main/migrations/`).
-   
+   - **Review Your `.gitignore`:** Verify that your `.gitignore` doesn't exclude migration files. Migration files are typically located in each app's `migrations` directory (e.g., `main/migrations/` and `superuserapp/migrations/`).
+
    - **Sample `.gitignore` for Migrations:**
      ```gitignore
      # Migrations
@@ -292,25 +340,30 @@ Migration files are essential for maintaining the consistency of your database s
      # Example:
      # main/migrations/
      # !main/migrations/__init__.py
+     # superuserapp/migrations/
+     # !superuserapp/migrations/__init__.py
      ```
 
 2. **Add Existing Migrations to Git:**
    If you've previously ignored migrations or haven't added them yet, you can add them to your repository:
-   
+
    ```bash
    git add main/migrations/
-   git commit -m "Add initial migration files"
+   git add superuserapp/migrations/
+   git commit -m "Add initial migration files for main and superuserapp"
    ```
 
 3. **Handle Future Migrations Appropriately:**
    - **Creating Migrations:**
      Whenever you make changes to your models, create new migrations:
+
      ```bash
      docker compose run web python manage.py makemigrations
      ```
-   
+
    - **Applying Migrations:**
      Apply migrations to your development and production databases:
+
      ```bash
      docker compose run web python manage.py migrate
      ```
@@ -320,12 +373,13 @@ Migration files are essential for maintaining the consistency of your database s
 - **Sequential Migrations:** Ensure that migration files are applied in the correct order to prevent conflicts and maintain database integrity.
 - **Avoiding Conflicts:** When working in a team, communicate schema changes to avoid migration conflicts. You might need to merge migration files if multiple developers are making concurrent changes.
 
-### 15. Contributing
+### 17. Contributing
 
 This boilerplate is intended for ease of setup and deployment. Contributions are welcome to enhance its features or improve its documentation. Fork the repository on GitHub and submit pull requests for any improvements.
 
-### 16. Troubleshooting
+### 18. Troubleshooting
 
+- **Template Loading Issues**: If you encounter `TemplateDoesNotExist` errors, ensure that your templates are correctly placed within the `templates` directory of each app and that `APP_DIRS` is set to `True` in your `settings.py`.
 - **DNS Propagation**: Ensure your DNS records are correctly set and have fully propagated.
 - **Port Conflicts**: Ensure ports `80` and `443` are free on your VPS.
 - **Permissions**: Verify that `init-letsencrypt.sh` has execute permissions.
@@ -335,7 +389,9 @@ This boilerplate is intended for ease of setup and deployment. Contributions are
 docker compose logs
 ```
 
-### 17. License
+- **Superuser Redirection Issues**: If superusers are being redirected incorrectly, ensure that the `get_success_url` method in `views.py` of `superuserapp` is correctly set to redirect to the panel.
+
+### 19. License
 
 This project is open-source and available under the [MIT License](LICENSE).
 
@@ -345,6 +401,7 @@ This project is open-source and available under the [MIT License](LICENSE).
 - [Docker Documentation](https://docs.docker.com/)
 - [Nginx Documentation](https://nginx.org/en/docs/)
 - [Certbot Documentation](https://certbot.eff.org/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 
 ## Acknowledgements
 
@@ -352,24 +409,6 @@ This project is open-source and available under the [MIT License](LICENSE).
 - **Docker**: For containerization.
 - **Nginx**: For efficient web serving.
 - **Let's Encrypt**: For free SSL certificates.
+- **Tailwind CSS**: For frontend styling.
 
 ---
-
-## Summary of Updates
-
-1. **Custom User Authentication:**
-   - Features Section: Added details about registering with both username and email, and logging in using either credential.
-   - Setup Instructions: Included steps to test user registration and login processes.
-   - Environment Management: Clarified the use of environment variables for authentication backends.
-
-2. **Migration Management:**
-   - Managing Migration Files: Added a dedicated section explaining why migration files should not be ignored and how to manage them effectively.
-
-3. **General Enhancements:**
-   - Project Structure: Updated to include backends.py and forms.py under the main app.
-   - Security Considerations: Expanded to include detailed security best practices.
-   - Troubleshooting: Enhanced with more detailed instructions for common issues.
-
-By incorporating these updates, the README now provides comprehensive guidance on using the enhanced authentication system and maintaining database migrations across different environments. This ensures that both local development and production deployments are smooth and consistent.
-
-If you have any further questions or need additional assistance, feel free to ask!
