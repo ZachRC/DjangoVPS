@@ -26,34 +26,34 @@
 ├── db.sqlite3
 ├── docker-compose.yml
 ├── env
-│ ├── bin
-│ ├── include
-│ ├── lib
-│ └── pyvenv.cfg
+│   ├── bin
+│   ├── include
+│   ├── lib
+│   └── pyvenv.cfg
 ├── init-letsencrypt.sh
 ├── main
-│ ├── init.py
-│ ├── admin.py
-│ ├── apps.py
-│ ├── migrations
-│ ├── models.py
-│ ├── templates
-│ │ └── main
-│ │ ├── dashboard.html
-│ │ ├── index.html
-│ │ ├── login.html
-│ │ └── register.html
-│ ├── tests.py
-│ ├── urls.py
-│ └── views.py
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   ├── models.py
+│   ├── templates
+│   │   └── main
+│   │       ├── dashboard.html
+│   │       ├── index.html
+│   │       ├── login.html
+│   │       └── register.html
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
 ├── manage.py
 ├── media
 ├── myproject
-│ ├── init.py
-│ ├── asgi.py
-│ ├── settings.py
-│ ├── urls.py
-│ └── wsgi.py
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── nginx.conf
 ├── requirements.txt
 └── static
@@ -138,7 +138,7 @@ On your domain registrar (e.g., GoDaddy), set up the following DNS records:
 Ensure that Docker and Docker Compose are installed and running on your machine.
 
 bash
-docker-compose up --build -d
+docker compose up --build -d
 
 
 This command will:
