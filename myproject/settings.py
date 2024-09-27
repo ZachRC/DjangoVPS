@@ -144,7 +144,9 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'index'
 
 # Security settings for production
-if not DEBUG:
+USE_SSL = os.environ.get('USE_SSL', '0') == '1'
+
+if not DEBUG and USE_SSL:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
