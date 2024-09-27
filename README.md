@@ -16,6 +16,7 @@
 
 ## Project Structure
 
+```
 .
 ├── .dockerignore
 ├── .env
@@ -57,7 +58,7 @@
 ├── nginx.conf
 ├── requirements.txt
 └── static
-
+```
 
 ## Prerequisites
 
@@ -70,10 +71,11 @@
 ## Setup Instructions
 
 ### 1. Clone the Repository
-bash
+
+```bash
 git clone https://github.com/ZachRC/DjangoVPS.git
 cd DjangoVPS
-
+```
 
 ### 2. Configure Environment Variables
 
@@ -83,35 +85,37 @@ Create two environment files: `.env.local` for local development and `.env` for 
 
 This file contains settings specific to your local development environment.
 
-dotenv
-.env.local
-Common Settings
+```dotenv
+# Common Settings
 SECRET_KEY=your-local-secret-key
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-Debug Mode
-DEBUG=1
-Database Configuration for Local Development (SQLite)
-No need for DATABASE_ variables when using SQLite
 
+# Debug Mode
+DEBUG=1
+
+# Database Configuration for Local Development (SQLite)
+# No need for DATABASE_ variables when using SQLite
+```
 
 #### `.env`
 
 This file contains production settings and should **never** be committed to version control.
 
-dotenv
-.env
-Common Settings
+```dotenv
+# Common Settings
 SECRET_KEY=your-production-secret-key
 DJANGO_ALLOWED_HOSTS=yoururl.com,www.yoururl.com,your-VPS-ip
-Debug Mode
+
+# Debug Mode
 DEBUG=0
-Database Configuration for Production (Supabase PostgreSQL)
+
+# Database Configuration for Production (Supabase PostgreSQL)
 DATABASE_NAME=postgres
 DATABASE_USER=your-supabase-username
 DATABASE_PASSWORD=your-supabase-password
 DATABASE_HOST=your-supabase-host
 DATABASE_PORT=your-supabase-port
-
+```
 
 **Important**: Replace placeholders like `your-production-secret-key` and database credentials with your actual values.
 
@@ -120,14 +124,12 @@ DATABASE_PORT=your-supabase-port
 On your domain registrar (e.g., GoDaddy), set up the following DNS records:
 
 1. **A Record for Root Domain**
-
    - **Type**: A
    - **Name**: @
    - **Value**: `167.172.224.226`
    - **TTL**: 1/2 Hour
 
 2. **A Record for www Subdomain**
-
    - **Type**: A
    - **Name**: www
    - **Value**: `167.172.224.226`
@@ -137,12 +139,11 @@ On your domain registrar (e.g., GoDaddy), set up the following DNS records:
 
 Ensure that Docker and Docker Compose are installed and running on your machine.
 
-bash
+```bash
 docker compose up --build -d
-
+```
 
 This command will:
-
 - Build the Docker images based on the `Dockerfile`.
 - Start the Django application using Gunicorn.
 - Start Nginx as a reverse proxy.
@@ -152,23 +153,18 @@ This command will:
 
 Run the `init-letsencrypt.sh` script to obtain and install SSL certificates.
 
-bash
+```bash
 chmod +x init-letsencrypt.sh
 ./init-letsencrypt.sh
-
+```
 
 **Script Breakdown:**
 
 - **Domains & Email**: The script is configured to request certificates for `scriptflows.com` and `www.scriptflows.com` using the provided email (`zacharycherney@gmail.com`). Modify these values in the script as needed.
-
 - **Staging Mode**: By default, `staging=0` is set to obtain real certificates. Use `staging=1` for testing to avoid hitting Let's Encrypt rate limits.
-
 - **SSL Parameters**: The script downloads recommended TLS parameters if not already present.
-
 - **Dummy Certificate**: A temporary certificate is created to allow Nginx to start.
-
 - **Certificate Request**: Certbot requests a real SSL certificate for the specified domains.
-
 - **Nginx Reload**: Nginx is reloaded to apply the new SSL certificates.
 
 **Note**: Ensure that your DNS records have propagated before running the script. This can take up to 48 hours but typically completes within a few hours.
@@ -176,7 +172,6 @@ chmod +x init-letsencrypt.sh
 ### 6. Access Your Application
 
 After successful setup:
-
 - **Local Development**: Access via `http://localhost:8000`
 - **Production**: Access via `https://scriptflows.com` and `https://www.scriptflows.com`
 
@@ -187,9 +182,9 @@ After successful setup:
 
 Ensure that you collect static files during the Docker build process:
 
-bash
+```bash
 docker compose run web python manage.py collectstatic --noinput
-
+```
 
 ### 8. Environment Management
 
@@ -206,9 +201,9 @@ docker compose run web python manage.py collectstatic --noinput
 
 Certbot is set up to automatically renew SSL certificates. The `certbot` service in `docker-compose.yml` runs the renewal process every 12 hours. To manually trigger a renewal:
 
-bash
+```bash
 docker compose run --rm certbot renew
-
+```
 
 ### 11. Contributing
 
@@ -221,9 +216,9 @@ This boilerplate is intended for ease of setup and deployment. Contributions are
 - **Permissions**: Verify that `init-letsencrypt.sh` has execute permissions.
 - **Logs**: Check Docker logs for any issues.
 
-bash
+```bash
 docker compose logs
-
+```
 
 ### 13. License
 
