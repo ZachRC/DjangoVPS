@@ -138,8 +138,8 @@ DATABASE_PASSWORD=your-db-password
 DATABASE_HOST=your-db-host
 DATABASE_PORT=your-db-port
 
-# Authentication Backends
-AUTHENTICATION_BACKENDS=main.backends.UsernameEmailBackend,django.contrib.auth.backends.ModelBackend
+# SSL Configuration
+USE_SSL=1
 ```
 
 **Important**: Replace placeholders like `your-production-secret-key` and database credentials with your actual values.
