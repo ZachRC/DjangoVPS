@@ -1,0 +1,28 @@
+# .gitignore
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+env/
+env/**
+*.env
+.env.local
+.env
+
+# Django
+*.log
+db.sqlite3
+
+# VS Code
+.vscode/
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+
+# Other
+*.swp
